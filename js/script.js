@@ -77,27 +77,71 @@ $form.append($inputName, $inputSurename, $inputLastname, $inputAge, $inputHobby,
 $BTNSubmit.innerText = 'Добавить'
 $title.after($form)
 
+//сортировка
+const $BTNSortToLastname = document.createElement('button'),
+    $BTNSortToAge = document.createElement('button'),
+    $blockBTN = document.createElement('div')
+
+$blockBTN.classList.add('df', 'block')
+$BTNSortToAge.classList.add('btn', 'btn-primary')
+$BTNSortToLastname.classList.add('btn', 'btn-primary')
+$BTNSortToLastname.innerText = 'Сорировать по фамилии'
+$BTNSortToAge.innerText = 'Сорировать по возрасту'
+
+$blockBTN.append($BTNSortToLastname, $BTNSortToAge)
+$form.after($blockBTN)
+
+// добавление в список
+function addTolistData(e) {
+    e.preventDefault()
+    let user = {
+        name: $inputName.value,
+        surename: $inputSurename.value,
+        lastname: $inputLastname.value,
+        age: $inputAge.value,
+        hobby: $inputHobby.value
+    }
+
+    listData.push(user)
+
+    listDataShow(listData);
+
+    $inputName.value = ''
+    $inputSurename.value = ''
+    $inputLastname.value = ''
+    $inputAge.value = ''
+    $inputHobby.value = ''
+};
+
+$BTNSubmit.addEventListener('click', addTolistData)
+
+
 //отрисовка
-const copyListData = [...listData]
-for (const oneUser of copyListData) {
-    oneUser.FIO = oneUser.name + ' ' + oneUser.surename + " " + oneUser.lastname
-    oneUser.birtYear = new Date().getFullYear() - oneUser.age
+
+function listDataShow(listData) {
+    $tbody.innerHTML = ''
+    const copyListData = [...listData]
+    for (const oneUser of copyListData) {
+        oneUser.FIO = oneUser.lastname + ' ' + oneUser.name + " " + oneUser.surename
+        oneUser.birtYear = new Date().getFullYear() - oneUser.age
+    }
+
+    for (const oneUser of copyListData) {
+        const $oneUsertr = document.createElement('tr')
+        const $oneUserth1 = document.createElement('th')
+        const $oneUserth2 = document.createElement('th')
+        const $oneUserth3 = document.createElement('th')
+        const $oneUserth4 = document.createElement('th')
+
+        $oneUserth1.innerText = oneUser.FIO
+        $oneUserth2.innerText = oneUser.age
+        $oneUserth3.innerText = oneUser.birtYear
+        $oneUserth4.innerText = oneUser.hobby
+
+        $oneUsertr.append($oneUserth1, $oneUserth2, $oneUserth3, $oneUserth4)
+        $tbody.append($oneUsertr)
+        $table.append($tbody)
+    }
 }
-
-for (const oneUser of copyListData) {
-    const $oneUsertr = document.createElement('tr')
-    const $oneUserth1 = document.createElement('th')
-    const $oneUserth2 = document.createElement('th')
-    const $oneUserth3 = document.createElement('th')
-    const $oneUserth4 = document.createElement('th')
-
-    $oneUserth1.innerText = oneUser.FIO
-    $oneUserth2.innerText = oneUser.age
-    $oneUserth3.innerText = oneUser.birtYear
-    $oneUserth4.innerText = oneUser.hobby
-
-    $oneUsertr.append($oneUserth1, $oneUserth2, $oneUserth3, $oneUserth4)
-    $tbody.append($oneUsertr)
-    $table.append($tbody)
-}
+listDataShow(listData)
 

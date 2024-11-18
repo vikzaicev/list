@@ -9,4 +9,10 @@ h1 {
 
 .app {
   padding: 20px 30px;
+}
+
+.block {
+  display: flex;
+  justify-content: space-between;
+  margin: 30px 0px 20px;
 }/*# sourceMappingURL=style.css.map */
