@@ -91,6 +91,7 @@ $BTNSortToAge.innerText = 'Сорировать по возрасту'
 $blockBTN.append($BTNSortToLastname, $BTNSortToAge)
 $form.after($blockBTN)
 
+
 // добавление в список
 function addTolistData(e) {
     e.preventDefault()
@@ -117,15 +118,29 @@ $BTNSubmit.addEventListener('click', addTolistData)
 
 
 //отрисовка
+let sortFlag = "FIO"
+let sortDir = true
+
 
 function listDataShow(listData) {
     $tbody.innerHTML = ''
-    const copyListData = [...listData]
+
+    //подготовка
+
+    let copyListData = [...listData]
     for (const oneUser of copyListData) {
         oneUser.FIO = oneUser.lastname + ' ' + oneUser.name + " " + oneUser.surename
         oneUser.birtYear = new Date().getFullYear() - oneUser.age
     }
 
+    //сортировка
+
+    copyListData = copyListData.sort(function (a, b) {
+        let sort = a[sortFlag] < b[sortFlag]
+        if (sortDir == false) sort = a[sortFlag] > b[sortFlag]
+        if (sort) return -1;
+    })
+    // отрисовка
     for (const oneUser of copyListData) {
         const $oneUsertr = document.createElement('tr')
         const $oneUserth1 = document.createElement('th')
@@ -145,3 +160,16 @@ function listDataShow(listData) {
 }
 listDataShow(listData)
 
+// клики сортировки
+
+$BTNSortToLastname.addEventListener('click', function () {
+    sortFlag = 'FIO'
+    sortDir = !sortDir
+    listDataShow(listData)
+})
+
+$BTNSortToAge.addEventListener('click', function () {
+    sortFlag = 'age'
+    sortDir = !sortDir
+    listDataShow(listData)
+})
