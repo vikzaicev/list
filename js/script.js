@@ -91,6 +91,25 @@ $BTNSortToAge.innerText = 'Сорировать по возрасту'
 $blockBTN.append($BTNSortToLastname, $BTNSortToAge)
 $form.after($blockBTN)
 
+//фильтрация
+
+const $filterBlock = document.createElement('div')
+$filterBlock.classList.add('df', 'block')
+const $titleH2 = document.createElement('h2')
+$titleH2.innerText = 'Фильтрация'
+$titleH2.classList.add('mb3')
+const $formFiltr = document.createElement('form'),
+    $inputFIO = document.createElement('input'),
+    $inputHobbi = document.createElement('input')
+$formFiltr.classList.add('df', 'mb-3')
+$inputFIO.classList.add('form-control', 'mb-3')
+$inputHobbi.classList.add('form-control', 'mb-3')
+$inputFIO.setAttribute('placeholder', 'ФИО')
+$inputHobbi.setAttribute('placeholder', 'Хобби')
+
+$formFiltr.append($inputFIO, $inputHobbi)
+$filterBlock.append($titleH2, $formFiltr)
+$form.after($filterBlock)
 
 // добавление в список
 function addTolistData(e) {
@@ -124,20 +143,29 @@ let sortDir = true
 
 function listDataShow(listData) {
     $tbody.innerHTML = ''
-
+    let copyListData = [...listData]
     //подготовка
 
-    let copyListData = [...listData]
     for (const oneUser of copyListData) {
         oneUser.FIO = oneUser.lastname + ' ' + oneUser.name + " " + oneUser.surename
         oneUser.birtYear = new Date().getFullYear() - oneUser.age
     }
-
+    // фильтрация
+    if ($inputFIO.value.toLowerCase().trim() !== '') {
+        copyListData = copyListData.filter(function (oneUser) {
+            if (oneUser.FIO.toLowerCase().includes($inputFIO.value.trim())) return true
+        })
+    }
+    if ($inputHobbi.value.toLowerCase().trim() !== '') {
+        copyListData = copyListData.filter(function (oneUser) {
+            if (oneUser.hobby.toLowerCase().includes($inputHobbi.value.trim())) return true
+        })
+    }
     //сортировка
 
     copyListData = copyListData.sort(function (a, b) {
-        let sort = a[sortFlag] < b[sortFlag]
-        if (sortDir == false) sort = a[sortFlag] > b[sortFlag]
+        let sort = a[sortFlag] > b[sortFlag]
+        if (sortDir == false) sort = a[sortFlag] < b[sortFlag]
         if (sort) return -1;
     })
     // отрисовка
@@ -171,5 +199,17 @@ $BTNSortToLastname.addEventListener('click', function () {
 $BTNSortToAge.addEventListener('click', function () {
     sortFlag = 'age'
     sortDir = !sortDir
+    listDataShow(listData)
+})
+
+// событие фильтрации
+$formFiltr.addEventListener('submit', function (event) {
+    event.preventDefault()
+})
+
+$inputFIO.addEventListener('input', function () {
+    listDataShow(listData)
+})
+$inputHobbi.addEventListener('input', function () {
     listDataShow(listData)
 })
